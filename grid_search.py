@@ -4,8 +4,7 @@ import os
 import sys
 
 import math
-import glob
-import random
+#import random
 import argparse
 import logging
 import subprocess
@@ -13,10 +12,10 @@ import numpy as np
 
 import galpy
 import GalDynPsr
-import matplotlib.pyplot as plt
-import seaborn as sns
-sns.set_context('poster')
-sns.set_style('ticks')
+#import matplotlib.pyplot as plt
+#import seaborn as sns
+#sns.set_context('poster')
+#sns.set_style('ticks')
 
 from shutil import copyfile
 from datetime import datetime
