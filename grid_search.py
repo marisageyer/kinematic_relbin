@@ -22,7 +22,6 @@ from shutil import copyfile
 from datetime import datetime
 
 ## import binary_tools
-sys.path.insert(0, os.path.abspath('/scratch01/mgeyer/Meertime_analysis/J1933-6211/scripts'))
 import binary_utils as bu
 
 
