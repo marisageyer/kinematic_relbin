@@ -139,7 +139,7 @@ def like(theta, temppar_file, tim_file, RA, DEC, PMRA, PMDEC, A1, PB, pbdot):
     logging.info("Removing mode tempo2 log:\t%s\n" %outpath)
     os.remove(outpath)
     print("Chi-squared for mode KOM:%.2f, STIG: %.2f, INC:%.2f, H3: %.3e, Mc:%.2f, Mp:%.2f is %.2f" %(kom, stig, inc_deg, h3, mass_c, mass_p, chi2[0]))
-    print("Reduced chi-squared for mode KOM:%.2f, STIG: %.2f, INC:%.2f, H3: %.3e, Mc:%.2f, Mp:%.2f is %.2f" %(kom, stig, inc_deg, h3, mass_c, mass_p, chi2[1]))
+    print("Reduced chi-squared for mode KOM:%.2f, STIG: %.2f, INC:%.2f, H3: %.3e, Mc:%.2f, Mp:%.2f is %.4f" %(kom, stig, inc_deg, h3, mass_c, mass_p, chi2[1]))
     print("-----------------------------------------------------------------------------------------------------")
     return chi2
 
@@ -168,7 +168,7 @@ def build_grid(kom_pars, stig_pars, mc_pars, temp_par, tim_file, RA, DEC, PMRA, 
     count = 0
     logfile = log_file()
     with open(logfile,'a') as f:
-        f.write("%s,%s,%s,%s\n" %("KOM", "Stig","H3", "Chi2","RedChi2"))
+        f.write("%s,%s,%s,%s,%s\n" %("KOM", "Stig","H3", "Chi2","RedChi2"))
         for i in KOMs:
             for k in Stigs:
                 for m in MCs:
