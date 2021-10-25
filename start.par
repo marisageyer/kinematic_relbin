@@ -1,42 +1,40 @@
-PSRJ                   J1933-6211                    
-RAJ                    19:33:32.4266742         1
-DECJ                   -62:11:46.87622          1
-F0                     282.212313615274         1
-F1                     -3.08242389123111e-16    1
-DM                     11.5176652617121         1
-PMRA                   -5.57613261567303        1
-PMDEC                  10.9346304301752         1
-PX                     1.89219318436145         1
-PB                     12.8179742994664         1
-T0                     53004.7999294699         1
-A1                     12.2815752631068         1
-OM                     120.885751317589         1
-ECC                    1.13185468599074e-06     1
+PSRJ                 J1933-6211
+RAJ                  19:33:32.4266968              1  
+DECJ                 -62:11:46.87553               1  
+F0                   282.21231361527619586         1  
+F1                   -3.0824205752493897725e-16    1  
+DM                   11.517665250028971163         1 
+PMRA                 -5.586428511993173317         1  
+PMDEC                10.890724829389556255         1  
+PX                   1.6965011973140548075         1  
+PB                   12.819406714204642949         1  
+T0                   52004.289833378302212         1  
+A1                   12.281575308288424461         1  
+OM                   -27975.861826384484386        1  
+ECC                  1.1326842254289664184e-06     1  
 
-TZRMJD                 56011.0235590541         
-TZRFRQ                 1370.516                 
-TZRMJD                 56011.0235590541         
-TRES                   1.31942748427927         
-NE_SW                  9.961                    
+TZRMJD               56011.023559054087226       
+TZRFRQ               1370.5160000000000764    
+TRES                 1.333        
+NE_SW                9.9610000000000000001
 
-PEPOCH                 53000.0001528192         
-POSEPOCH               53000.0001528192         
-DMEPOCH                53000.0001528192         
+PEPOCH               53000.000152819224901       
+POSEPOCH             53000.000152819224901       
+DMEPOCH              53000.000152819224901       
 
-TRACK                  -2                        
-TZRSITE                7
-EPHVER                 5                    
-CLK                    TT(BIPM(2011))
-MODE                   1
-UNITS                  TCB
-TIMEEPH                IF99
-DILATEFREQ             Y
-PLANET_SHAPIRO         Y
-T2CMETHOD              IAU2000B
-CORRECT_TROPOSPHERE    Y
-EPHEM                  DE421
-NITS                   2
-BINARY                 T2                  
+TRACK                -2                          
+EPHVER               5                           
+CLK                  TT(BIPM(2011))
+MODE                 1
+UNITS                TCB
+TIMEEPH              IF99
+DILATEFREQ           Y
+PLANET_SHAPIRO       Y
+T2CMETHOD            IAU2000B
+CORRECT_TROPOSPHERE  Y
+EPHEM                DE421
+NITS                 3
+BINARY               T2
 
 JUMP -MJD_58550_58690_1K -1 -0.000306243       0
 JUMP -MJD_58526.21089_1K -1 -2.4628e-05        0
@@ -44,9 +42,9 @@ JUMP -MJD_58550.14921_1K -1 2.463e-05          0
 JUMP -MJD_58550.14921B_1K -1 -1.196e-06        0
 JUMP -MJD_58557.14847_1K -1 -4.785e-06         0
 JUMP -MJD_58575.9591_1K -1 5.981308411e-07     0
-JUMP -from CASPSR_1382 1.5477934808924e-05     0
-JUMP -from CPSR2_1341 -0.00030527360879123     0
-JUMP -from CPSR2_1405 -0.00031903757692148     0
-JUMP -from MKT_MTM_775 -5.7807861912855e-06    0 
+JUMP -from CASPSR_1382 1.5478096044408e-05     1
+JUMP -from CPSR2_1341 -0.00030527432125859     1
+JUMP -from CPSR2_1405 -0.00031903827390095     1
+JUMP -from MKT_MTM_775 -5.7806770921043e-06    1
 
-SINI                   KIN
+SINI                 KIN
