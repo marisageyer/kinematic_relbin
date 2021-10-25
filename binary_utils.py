@@ -231,12 +231,13 @@ def mass_p_from_massfunc(mc, inc, xp, Pb):
     mp_out = np.sqrt((mc*np.sin(inc_rad))**3/RHS) - mc
     return mp_out
 
-
 def chi2_from_tempo2log(tempo2log):
     f = open(tempo2log)
     lines = f.readlines()
     ## Find the Fit Chi line:
     idx_Chi = np.where([lines[i].startswith("Fit Chi") for i in range(len(lines))])[0][0]
+    Chi_line = lines[idx_Chi].split("\t")[0]
+    Chi = float(Chi_line.split("= ")[-1])
     red_Chi_line = lines[idx_Chi].split("\t")[1]
     red_Chi = float(red_Chi_line.split("= ")[-1])
-    return red_Chi
+    return [Chi,red_Chi]
