@@ -33,14 +33,12 @@ parser.add_argument("-d", "--dist", help="provide distance to pulsar in kpc", ty
 parser.add_argument("-kom", "--kom", help="provide range of KOM parameters in the format: low_limit upper_limit step_size", type=float, nargs=3)
 parser.add_argument("-stig", "--stig", help="provide range of STIG in the format: (low_limit, upper_limit, step_size)", type=float, nargs=3)
 parser.add_argument("-mc", "--mc", help="provide range of MC in the format: (low_limit, upper_limit, step_size)", type=float, nargs=3)
+parser.add_argument("-h3", "--h3", help="provide range of H3 **IN UNITS 1e-8** in the format: (low_limit, upper_limit, step_size)", type=float, nargs=3)
 
 
 parser.add_argument("-v", "--verbose", help="increase output verbosity",
                     action="store_true")
 args = parser.parse_args()
-
-
-
 
 
 if args.verbose:
@@ -151,40 +149,79 @@ def log_file():
     return logfilename
 
 
-def build_grid(kom_pars, stig_pars, mc_pars, temp_par, tim_file, RA, DEC, PMRA, PMDEC, A1, PB, pbdot):
+if args.mc:
+    def build_grid(kom_pars, stig_pars, mc_pars, temp_par, tim_file, RA, DEC, PMRA, PMDEC, A1, PB, pbdot):
+        
+        KOMs = np.arange(kom_pars[0], kom_pars[1]+kom_pars[2],kom_pars[2])
+        Stigs = np.arange(stig_pars[0], stig_pars[1]+stig_pars[2],stig_pars[2])
+        MCs = np.arange(mc_pars[0], mc_pars[1]+mc_pars[2],mc_pars[2])
     
-    KOMs = np.arange(kom_pars[0], kom_pars[1]+kom_pars[2],kom_pars[2])
-    Stigs = np.arange(stig_pars[0], stig_pars[1]+stig_pars[2],stig_pars[2])
-    MCs = np.arange(mc_pars[0], mc_pars[1]+mc_pars[2],mc_pars[2])
+        print("Computing Chi2 grid using the following ranges:")
+        print("KOM: %.3f \t to %.3f \t with step size %.3f " %(kom_pars[0], kom_pars[1],kom_pars[2]))
+        print("STIG: %.3f \t to %.3f \t with step size %.3f " %(stig_pars[0], stig_pars[1],stig_pars[2]))
+        print("MC: %.3f \t to %.3f \t with step size %.3f " %(mc_pars[0], mc_pars[1],mc_pars[2]))
+        
+        
+        nmodes = len(KOMs)*len(Stigs)*len(MCs)
+        print("Number of modes to solve for in grid search: %d\n" %(nmodes))
+        count = 1
+        logfile = log_file()
+        with open(logfile,'a') as f:
+            f.write("%s,%s,%s,%s,%s\n" %("KOM", "Stig","H3", "Chi2","RedChi2"))
+            for i in KOMs:
+                for k in Stigs:
+                    for m in MCs:
+                        h = bu.h3Shap(m,k)
+                        theta=[i,k,h]
+        
+                        print("Mode: %d/%d\n" %(count,nmodes))
+                        count+=1
+                
+                        chi2 = like(theta, temp_par, tim_file, RA, DEC, PMRA, PMDEC, A1, PB, pbdot)
+                        f.write("%.4f,%.4f,%.4e,%.3f,%.3f\n" %(i, k,h, chi2[0], chi2[1]))
+    
+            f.close()
 
-    print("Computing Chi2 grid using the following ranges:")
-    print("KOM: %.3f \t to %.3f \t with step size %.3f " %(kom_pars[0], kom_pars[1],kom_pars[2]))
-    print("STIG: %.3f \t to %.3f \t with step size %.3f " %(stig_pars[0], stig_pars[1],stig_pars[2]))
-    print("MC: %.3f \t to %.3f \t with step size %.3f " %(mc_pars[0], mc_pars[1],mc_pars[2]))
+elif args.h3:
+    def build_grid(kom_pars, stig_pars, h3_pars, temp_par, tim_file, RA, DEC, PMRA, PMDEC, A1, PB, pbdot):
+        
+        KOMs = np.arange(kom_pars[0], kom_pars[1]+kom_pars[2],kom_pars[2])
+        Stigs = np.arange(stig_pars[0], stig_pars[1]+stig_pars[2],stig_pars[2])
+        H3s = 1e-8*np.arange(h3_pars[0], h3_pars[1]+h3_pars[2],h3_pars[2])
     
+        print("Computing Chi2 grid using the following ranges:")
+        print("KOM: %.3f \t to %.3f \t with step size %.3f " %(kom_pars[0], kom_pars[1],kom_pars[2]))
+        print("STIG: %.3f \t to %.3f \t with step size %.3f " %(stig_pars[0], stig_pars[1],stig_pars[2]))
+        print("H3: %.3f \t to %.3f \t with step size %.3f " %(h3_pars[0], h3_pars[1],h3_pars[2]))
+        
+        nmodes = len(KOMs)*len(Stigs)*len(H3s)
+        print("Number of modes to solve for in grid search: %d\n" %(nmodes))
+        count = 1
+        logfile = log_file()
+        with open(logfile,'a') as f:
+            f.write("%s,%s,%s,%s,%s\n" %("KOM", "Stig","H3", "Chi2","RedChi2"))
+            for i in KOMs:
+                for k in Stigs:
+                    for h in H3s:
+                        theta=[i,k,h]
+                        print("Mode: %d/%d\n" %(count,nmodes))
+                        count+=1
+                
+                        chi2 = like(theta, temp_par, tim_file, RA, DEC, PMRA, PMDEC, A1, PB, pbdot)
+                        f.write("%.4f,%.4f,%.4e,%.3f,%.3f\n" %(i, k,h, chi2[0], chi2[1]))
     
-    nmodes = len(KOMs)*len(Stigs)*len(MCs)
-    print("Number of modes to solve for in grid search: %d\n" %(nmodes))
-    count = 0
-    logfile = log_file()
-    with open(logfile,'a') as f:
-        f.write("%s,%s,%s,%s,%s\n" %("KOM", "Stig","H3", "Chi2","RedChi2"))
-        for i in KOMs:
-            for k in Stigs:
-                for m in MCs:
-                    h = bu.h3Shap(m,k)
-                    theta=[i,k,h]
-    
-                    print("Mode: %d/%d\n" %(count,nmodes))
-                    count+=1
-            
-                    chi2 = like(theta, temp_par, tim_file, RA, DEC, PMRA, PMDEC, A1, PB, pbdot)
-                    f.write("%.4f,%.4f,%.4e,%.3f,%.3f\n" %(i, k,h, chi2[0], chi2[1]))
+            f.close()
 
-        f.close()
+else:
+   print("Provide at least one of MC or H3 along with KOM and Stig")
 
 if __name__ == "__main__":
     temp_par = starting_par(args.startpar,args.dist)
     RA, DEC, PMRA, PMDEC, A1, PB = get_Astrometry(args.startpar)
-    pbdot = get_Pbdot_par(temp_par)    
-    build_grid(args.kom, args.stig, args.mc, temp_par, args.tim, RA, DEC, PMRA, PMDEC, A1, PB, pbdot)
+    pbdot = get_Pbdot_par(temp_par)
+    if args.mc:    
+        build_grid(args.kom, args.stig, args.mc, temp_par, args.tim, RA, DEC, PMRA, PMDEC, A1, PB, pbdot)
+    if args.h3:    
+        build_grid(args.kom, args.stig, args.h3, temp_par, args.tim, RA, DEC, PMRA, PMDEC, A1, PB, pbdot)
+    else:
+        print("Provide at least one of MC or H3 along with KOM and Stig")
