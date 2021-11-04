@@ -33,7 +33,7 @@ PLANET_SHAPIRO       Y
 T2CMETHOD            IAU2000B
 CORRECT_TROPOSPHERE  Y
 EPHEM                DE421
-NITS                 3
+NITS                 2
 BINARY               T2
 
 JUMP -MJD_58550_58690_1K -1 -0.000306243       0
