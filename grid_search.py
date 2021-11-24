@@ -120,8 +120,8 @@ def like(theta, temppar_file, tim_file, RA, DEC, PMRA, PMDEC, A1, PB, pbdot):
     chi2 = bu.chi2_from_tempo2log(outpath)
     logging.info("Removing mode tempo2 log:\t%s\n" %outpath)
     os.remove(outpath)
-    logging.info("Chi-squared for mode KOM:%.2f, STIG: %.2f, INC:%.2f, H3: %.3e, Mc:%.2f, Mp:%.2f is %.2f" %(kom, stig, inc_deg, h3, mass_c, mass_p, chi2[0]))
-    logging.info("Reduced chi-squared for mode KOM:%.2f, STIG: %.2f, INC:%.2f, H3: %.3e, Mc:%.2f, Mp:%.2f is %.4f" %(kom, stig, inc_deg, h3, mass_c, mass_p, chi2[1]))
+    logging.info("Chi-squared for mode KOM: %.2f, STIG: %.2f, INC: %.2f, H3: %.3e, Mc: %.2f, Mp: %.2f is %.2f" %(kom, stig, inc_deg, h3, mass_c, mass_p, chi2[0]))
+    logging.info("Reduced chi-squared for mode KOM: %.2f, STIG: %.2f, INC: %.2f, H3: %.3e, Mc: %.2f, Mp: %.2f is %.4f" %(kom, stig, inc_deg, h3, mass_c, mass_p, chi2[1]))
     logging.info("-----------------------------------------------------------------------------------------------------")
     return chi2
 
