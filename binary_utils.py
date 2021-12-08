@@ -127,6 +127,8 @@ def xdot(inc, xp, PMRA, PMDEC, omega_asc, pbdot):
     xdot_out = xdot_t1
     return xdot_out
 
+#def inc_from_xdotkom(xdot, xp, PMRA, PMDEC, omega_asc, pbdot)
+
 def omegadot(inc, PMRA, PMDEC, omega_asc):
     ## Contribution to omegadot due to proper motion in deg/yr
     ## inc - inclination angle in degrees
@@ -241,3 +243,6 @@ def chi2_from_tempo2log(tempo2log):
     Chi = float(Chi_line.split("\t")[1].split(" = ")[1].split("/")[0])
     red_Chi = float(Chi_line.split("\t")[1].split(" = ")[-1])
     return [Chi,red_Chi]
+
+
+
