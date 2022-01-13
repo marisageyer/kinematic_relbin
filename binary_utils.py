@@ -245,4 +245,11 @@ def chi2_from_tempo2log(tempo2log):
     return [Chi,red_Chi]
 
 
-
+def dist_from_px(px):
+    """px - parallax in miliarcseconds (as in par file)
+    Returns dist in pc"""
+    px_arcsec = px/1000.
+    dist_AU = (180*3600/np.pi)*(1/px_arcsec)
+    AU2pc = 4.84814e-6 
+    dist_pc = dist_AU*AU2pc
+    return dist_pc
