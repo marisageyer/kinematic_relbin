@@ -5,8 +5,7 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser(description="Compare the parameters, those fitted and the jumps included between two parameter files")
-parser.add_argument("-p1", "--parfile1", help="provide parfile1")
-parser.add_argument("-p2", "--parfile2", help="provide parfile2")
+parser.add_argument("-p", "--parfiles", help="provide two parfiles to compare, separated by spaces e.g. -p par1.par par2.par", nargs=2)
 parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
 args = parser.parse_args()
 
@@ -33,7 +32,6 @@ def par_to_tempfiles(par1,par2):
     
 def file_to_frame(file1,file2):
     names=['parname', 'parvalue', 'fitflag', 'uncertainty', 'extra']
-    
     df1 = pd.read_csv(file1, delimiter='\t',header = None,names=names,comment='#')
     df2 = pd.read_csv(file2, delimiter='\t',header = None,names=names,comment='#')
     
@@ -85,8 +83,8 @@ def jumps_par(df):
 
 if __name__ == "__main__":
 
-    filen1 = args.parfile1
-    filen2 = args.parfile2
+    filen1 = args.parfiles[0]
+    filen2 = args.parfiles[1]
     par_to_tempfiles(filen1,filen2)
 
     df1, df2 = file_to_frame('temp1.csv', 'temp2.csv')
