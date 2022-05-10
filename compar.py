@@ -69,8 +69,13 @@ def fit_par(df):
     df_fit = df[df.fitflag == '1']
     nr_fit = df_fit.shape[0]
     fitted_par = df_fit.parname.values
-    return nr_fit, fitted_par
-    
+    ## slice of full df
+    df_fit_s = df_fit.iloc[:,0:1]
+    ## add index to use in temponest
+    df_fit_s['fit_index'] = np.arange(1,nr_fit+1,1)
+    df_fit_sort = df_fit_s.sort_values(by='parname')
+    return df_fit_sort, nr_fit, fitted_par   
+
 
 def parnames_compare(df1,df2):
     ## remove the jumps from dataframes, will be analysed separately
@@ -121,8 +126,8 @@ if __name__ == "__main__":
 
     p12, p21, f12, f21 = parnames_compare(df1,df2)
 
-    nr1, names1 = fit_par(df1)
-    nr2, names2 = fit_par(df2)
+    df_fit1, nr1, names1 = fit_par(df1)
+    df_fit2, nr2, names2 = fit_par(df2)
 
     dfj1, nr_jumps1,nr_fitted_jumps1 = jumps_par(df1)
     dfj2, nr_jumps2,nr_fitted_jumps2 = jumps_par(df2)
@@ -166,16 +171,17 @@ if __name__ == "__main__":
 
     ## verbose mode
     if args.verbose:
-        print(f'--- Fitted params in {filen1} ---')
-        print(*sorted(names1), sep='\n')
+
+        print(f'--- Fit flag params in {filen1} ---')
+        print('--- indices for use in temponest priors ---\n')
+        print(df_fit1.to_string(header=['Name','Idx'], index=False))
         print("\n")
 
-
-        print(f'--- Fitted params in {filen2} ---')
-        print(*sorted(names2), sep='\n')
+        print(f'--- Fit flag params in {filen2} ---')
+        print('--- indices for use in temponest priors ---\n')
+        print(df_fit2.to_string(header=['Name','Idx'], index=False))
         print("\n")
 
-    print("--------- JUMPS ---------\n")
     print(f'Number of JUMPS in {filen1} FITTED/INCLUDED:\t {nr_fitted_jumps1}/{nr_jumps1}')
     print(f'Number of JUMPS in {filen2} FITTED/INCLUDED:\t {nr_fitted_jumps2}/{nr_jumps2}')
     print("\n")

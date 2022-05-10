@@ -202,15 +202,23 @@ def h3Shap(mc,stig):
 
 ## Inverted functions to obtain inc, m1 and m2 from h3 and stig.
 
+#def inc_from_stig(stig):
+#    # Note currently assumes a single solution (as for 0<i<90)
+#    i = Symbol('i')
+#    sol =  solve(stig - sin(i)/(1+cos(i)), i)
+#    inc_rad = (float(sol[0]))
+#    inc_deg = np.rad2deg(inc_rad)
+#    sini = np.sin(inc_rad)
+#    #print('RAD','DEG','SINI')
+#    return inc_rad, inc_deg, sini
+
+
 def inc_from_stig(stig):
-    # Note currently assumes a single solution (as for 0<i<90)
-    i = Symbol('i')
-    sol =  solve(stig - sin(i)/(1+cos(i)), i)
-    inc_rad = (float(sol[0]))
+    sini = 2 * stig / (1 + stig*stig)
+    inc_rad = np.arcsin(sini)
     inc_deg = np.rad2deg(inc_rad)
-    sini = np.sin(inc_rad)
-    #print('RAD','DEG','SINI')
     return inc_rad, inc_deg, sini
+
 
 def mass_c_from_stigh3(h3,stig):
     Tsun = 4.9254909476412675*1e-6 ## mass of the Sun in units of time (sec)(G*M_sun/c^3)
