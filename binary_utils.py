@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import os
 import numpy as np
 from sympy.solvers import solve
 from sympy import Symbol
@@ -10,6 +10,8 @@ from astropy.coordinates import SkyCoord
 
 import galpy
 import GalDynPsr
+
+import pandas as pd
 
 ## Setting up equations and parameters
 
@@ -253,3 +255,123 @@ def dist_from_px(px):
     AU2pc = 4.84814e-6 
     dist_pc = dist_AU*AU2pc
     return dist_pc
+
+
+def par_to_tempfile(par1):
+    temp1 = open('temp1.csv', 'w')
+    with open(par1, 'r') as f1:
+        lines = f1.readlines()
+        for l in lines:
+            space2tab = "\t".join(l.split())+"\n"
+            temp1.write(space2tab)
+    temp1.close()
+    return temp1
+
+def onefile_to_frame(file1):
+    names=['parname', 'parvalue', 'fitflag', 'uncertainty', 'extra']
+    df1 = pd.read_csv(file1, delimiter='\t',header= None,names=names,comment='#')
+    return df1
+
+def par_to_df(par):
+    tt = par_to_tempfile(par)
+    df = onefile_to_frame(tt.name)
+    os.remove(tt.name)
+    return df
+
+def posterior_to_par(chain, outname, TNparfile,fit=True):
+    if fit == True:
+        fitflag = '1'
+    else:
+        fitflag = '0'
+    ccc = chain
+    tnefs, tneqs = parfile_to_fromflagstrings(TNparfile)
+    i,j = 0,0
+    with open(outname,'a') as f:
+        for key in ccc.analysis.get_summary():
+            if key == 'RAJ':
+                c = SkyCoord(ra=ccc.analysis.get_summary()[key][1]*u.radian, dec=ccc.analysis.get_summary()['DECJ'][1]*u.radian, frame='icrs')
+                diff1 = ccc.analysis.get_summary()[key][1] - ccc.analysis.get_summary()[key][0]
+                diff2 = ccc.analysis.get_summary()[key][2] - ccc.analysis.get_summary()[key][1]
+                diff = np.max([diff1,diff2])
+                
+                diff1_DECJ = ccc.analysis.get_summary()['DECJ'][1] - ccc.analysis.get_summary()['DECJ'][0]
+                diff2_DECJ = ccc.analysis.get_summary()['DECJ'][2] - ccc.analysis.get_summary()['DECJ'][1]
+                diff_DECJ = np.max([diff1_DECJ,diff2_DECJ])
+ 
+                c_diff = SkyCoord(ra=diff*u.radian, dec=diff_DECJ*u.radian, frame='icrs')
+                
+                radec = c.to_string('hmsdms', sep=":", precision=10) 
+                radec_diff = c_diff.to_string('hmsdms', sep=":", precision=10) 
+                #print(radec_diff)
+                ra_diff_uncert = float(radec_diff.split(" ")[0].split(":")[2])
+                dec_diff_uncert = float(radec_diff.split(" ")[1].split(":")[2])
+                
+                to_write0 = "%s %s %s %.18g %s" %(key,radec.split(" ")[0],fitflag,ra_diff_uncert," \n")
+                to_write1 = "%s %s %s %.18g %s" %("DECJ",radec.split(" ")[1],fitflag,dec_diff_uncert," \n")
+                print(to_write0)
+                print(to_write1)
+                f.write(to_write0)
+                f.write(to_write1)
+            elif key == 'DECJ':
+                    continue
+            elif key.startswith("EFAC"):
+                val = ccc.analysis.get_summary()[key][1]
+
+                valout = 10**val
+                keyout = tnefs[i]
+                i=i+1
+                to_write = "%s %.18g\n" %(keyout,valout)
+                f.write(to_write)
+                print(to_write)
+            elif key.startswith("EQUAD"):
+                val = ccc.analysis.get_summary()[key][1]
+                keyout = tneqs[j]
+                j=j+1
+                to_write = "%s %.18g\n" %(keyout,val)
+                f.write(to_write)
+                print(to_write)
+            elif key == "RedSlope":
+                keyval = "TNRedGam"
+                to_write = "%s %.18g %s" %(keyval,ccc.analysis.get_summary()[key][1]," \n")
+                f.write(to_write)
+                print(to_write)
+                to_write2 = "TNSubtractRed 1 \n"
+                f.write(to_write2)
+                print(to_write2)
+            elif key == "RedAmp":
+                keyval = "TNRedAmp"
+                to_write = "%s %.18g %s" %(keyval,ccc.analysis.get_summary()[key][1]," \n")
+                f.write(to_write)
+                print(to_write)
+            elif key == "DMSlope":
+                keyval = "TNDMGam"
+                to_write = "%s %.18g %s" %(keyval,ccc.analysis.get_summary()[key][1]," \n")
+                f.write(to_write)
+                print(to_write)
+                to_write2 = "TNSubtractDM 1 \n"
+                f.write(to_write2)
+                print(to_write2)
+            elif key == "DMAmp":
+                keyval = "TNDMAmp"
+                to_write = "%s %.18g %s" %(keyval,ccc.analysis.get_summary()[key][1]," \n")
+                f.write(to_write)
+                print(to_write)
+            else:
+                diff1 = ccc.analysis.get_summary()[key][1] - ccc.analysis.get_summary()[key][0]
+                diff2 = ccc.analysis.get_summary()[key][2] - ccc.analysis.get_summary()[key][1]
+                diff = np.max([diff1,diff2])
+                to_write = "%s %.18g %s %.18g %s" %(key,ccc.analysis.get_summary()[key][1],fitflag,diff," \n")
+                f.write(to_write)
+                print(to_write)
+                
+        pars_to_add =  pars_to_keep(chain,TNparfile)
+        for p in pars_to_add:
+            lineadds = parfile_par_to_line(p, TNparfile)
+            for la in lineadds:
+                to_write = la
+                f.write(to_write)
+                print(to_write)
+        
+        f.close()
+        return outname
+

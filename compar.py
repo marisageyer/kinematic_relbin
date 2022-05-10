@@ -4,12 +4,31 @@ import pandas as pd
 import os
 import argparse
 
-parser = argparse.ArgumentParser(description="Compare the parameters, those fitted and the jumps included between two parameter files")
-parser.add_argument("-p", "--parfiles", help="provide two parfiles to compare, separated by spaces e.g. -p par1.par par2.par", nargs=2)
-parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-args = parser.parse_args()
+## useful functions for single parameter files
 
-## functions
+def par_to_tempfile(par1):
+    temp1 = open('temp1.csv', 'w')
+    with open(par1, 'r') as f1:
+        lines = f1.readlines()
+        for l in lines:
+            space2tab = "\t".join(l.split())+"\n"
+            temp1.write(space2tab)
+    temp1.close()
+    return temp1
+
+def onefile_to_frame(file1):
+    names=['parname', 'parvalue', 'fitflag', 'uncertainty', 'extra']
+    df1 = pd.read_csv(file1, delimiter='\t',header = None,names=names,comment='#')
+    return df1
+
+def par_to_df(par):
+    tt = par_to_tempfile(par)
+    df = onefile_to_frame(tt.name)
+    os.remove(tt.name)
+    return df
+
+
+## functions to compare two parfiles
 
 def par_to_tempfiles(par1,par2):
     temp1 = open('temp1.csv', 'w')
@@ -80,6 +99,12 @@ def jumps_par(df):
     nr_jumps = dfj.shape[0]
     nr_fitted_jumps = dfj[dfj.iloc[: , -1] == 1].shape[0]
     return dfj, nr_jumps,nr_fitted_jumps
+
+parser = argparse.ArgumentParser(description="Compare the parameters, those fitted and the jumps included between two parameter files")
+parser.add_argument("-p", "--parfiles", help="provide two parfiles to compare, separated by spaces e.g. -p par1.par par2.par", nargs=2)
+parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
+args = parser.parse_args()
+ 
 
 if __name__ == "__main__":
 
