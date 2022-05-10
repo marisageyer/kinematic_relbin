@@ -278,6 +278,42 @@ def par_to_df(par):
     os.remove(tt.name)
     return df
 
+def parfile_to_fromflagstrings(TNparfile):
+    dfpar = par_to_df(TNparfile)
+    dfselect_EF = dfpar[dfpar.parname == 'TNEF'].iloc[:,0:3]
+    tostrings_EF = dfselect_EF.to_string(header=False,index=False,index_names=False).split('\n')
+    
+    dfselect_EQ = dfpar[dfpar.parname == 'TNEQ'].iloc[:,0:3]
+    tostrings_EQ = dfselect_EQ.to_string(header=False,index=False,index_names=False).split('\n')
+    return tostrings_EF, tostrings_EQ
+
+def pars_to_keep(chain,TNparfile):
+    dfpar = par_to_df(TNparfile)
+    parvals = dfpar.parname.values
+    cckeys = chain.analysis.get_summary().keys()
+    
+    keep_from_par = []
+    for parm in parvals:
+        if parm not in cckeys:
+            keep_from_par.append(parm)
+    uniqpar = list(dict.fromkeys(keep_from_par))
+    ## Remove these if they exist:
+    to_remove = ['TNEF', 'TNEQ','TNRedGam','TNRedAmp','TNDMGam','TNDMAmp']
+    for r in to_remove:
+        while r in uniqpar: uniqpar.remove(r)   
+    pars_out = uniqpar
+    return pars_out
+
+def parfile_par_to_line(parameter, TNparfile):
+    lineouts=[]
+    with open(TNparfile) as f:
+        lines = f.readlines()
+        for l in lines:
+            if l.startswith(parameter):
+                lineout = l
+                lineouts.append(lineout)
+    return lineouts
+
 def posterior_to_par(chain, outname, TNparfile,fit=True):
     if fit == True:
         fitflag = '1'
